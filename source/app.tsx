@@ -27,6 +27,13 @@ export default function App({
 	source = defaultText,
 	regTxtVal: regTxtValue = '',
 }: Props) {
+	const [hideStringBeforeFirstMatch, setHideStringBeforeFirstMatch] =
+		useState(false);
+	const [hideStringAfterLastMatch, setHideStringAfterLastMatch] =
+		useState(false);
+	const [showOnlyMatchedParts, setShowOnlyMatchedParts] = useState(false);
+	const [lineBreakAfterEachMatch, setLineBreakAfterEachMatch] = useState(false);
+
 	const getHighlightedMatches = (
 		source: string,
 		rgxTxt: string,
@@ -38,16 +45,28 @@ export default function App({
 
 		const result = execall(new RegExp(rgxTxt, flags), source);
 		let j = 0;
+		let shouldExcludePlainText = hideStringBeforeFirstMatch;
 
 		const acc = result.map(curr => {
+			if (showOnlyMatchedParts) {
+				shouldExcludePlainText = true;
+			} else if (shouldExcludePlainText) {
+				shouldExcludePlainText = j === 0;
+			}
+
 			const plainText = <Text>{source.slice(j, curr.index)}</Text>;
 			const highlightedText = (
 				<Text color="#101820" backgroundColor="#FEE715">
 					{source.slice(curr.index, curr.index + curr.match.length)}
+					{lineBreakAfterEachMatch ? <Newline /> : ''}
 				</Text>
 			);
 
 			j = curr.index + curr.match.length;
+
+			if (shouldExcludePlainText) {
+				return <Text key={curr.index}>{highlightedText}</Text>;
+			}
 
 			return (
 				<Text key={curr.index}>
@@ -57,7 +76,11 @@ export default function App({
 			);
 		});
 
-		if (j < source.length) {
+		if (
+			j < source.length &&
+			!hideStringAfterLastMatch &&
+			!showOnlyMatchedParts
+		) {
 			return (
 				<Text>
 					{acc}
@@ -78,6 +101,7 @@ export default function App({
 	const [submitted, setSubmitted] = useState(regTxt !== '');
 	const [lastTxt, setLastTxt] = useState(source);
 	const [activeInputIndex, setActiveInputIndex] = useState(0);
+	const [displayOptions, setDisplayOptions] = useState(false);
 	const [lastHighlightedText, setLastHighlightedText] = useState<
 		ReactNode[] | ReactNode | string
 	>(
@@ -88,6 +112,9 @@ export default function App({
 	const [lastFlags, setLastFlags] = useState(defaultFlags);
 	const [panelStepper, setPanelStepper] = useState(
 		new RangeStepper({max: 2, current: 1}),
+	);
+	const [optionsPanelStepper, setOptionsPanelStepper] = useState(
+		new RangeStepper({max: 3, current: 0}),
 	);
 
 	function GetStatusText() {
@@ -119,7 +146,42 @@ export default function App({
 	}
 
 	useInput((input, key) => {
-		if (key.tab) {
+		if (displayOptions) {
+			if (key.tab) {
+				setOptionsPanelStepper(optionsPanelStepper.next().dup());
+			} else if (input === ' ') {
+				if (optionsPanelStepper.isCurrent(0))
+					setHideStringBeforeFirstMatch(!hideStringBeforeFirstMatch);
+				else if (optionsPanelStepper.isCurrent(1))
+					setHideStringAfterLastMatch(!hideStringAfterLastMatch);
+				else if (optionsPanelStepper.isCurrent(2))
+					setShowOnlyMatchedParts(!showOnlyMatchedParts);
+				else setLineBreakAfterEachMatch(!lineBreakAfterEachMatch);
+			} else if (key.ctrl && input === 'o') {
+				setDisplayOptions(!displayOptions);
+				if (panelStepper.current < 2) {
+					const target = panelStepper.current === 0 ? lastTxt : regTxt;
+					const setTarget = panelStepper.current === 0 ? setLastTxt : setRegTxt;
+					const newTargetValue = target.slice(0, -1);
+					setTarget(newTargetValue);
+					if (newTargetValue.length > 0)
+						if (panelStepper.current === 0)
+							setLastHighlightedText(
+								getHighlightedMatches(newTargetValue, regTxt, regFlags),
+							);
+						else
+							setLastHighlightedText(
+								getHighlightedMatches(lastTxt, newTargetValue, regFlags),
+							);
+				} else if (lastTxt !== '') {
+					setLastHighlightedText(
+						getHighlightedMatches(lastTxt, regTxt, regFlags),
+					);
+				}
+			}
+		} else if (key.ctrl && input === 'o') {
+			setDisplayOptions(!displayOptions);
+		} else if (key.tab) {
 			if (!panelStepper.isCurrent(0))
 				setActiveInputIndex(activeInputIndex === 1 ? 0 : 1);
 			setPanelStepper(panelStepper.next().dup());
@@ -127,13 +189,64 @@ export default function App({
 		} else if (input === 'i' && !textEditing && panelStepper.isCurrent(0)) {
 			setLastHighlightedText(defaultText);
 			setTextEditing(true);
+		} else if (key.ctrl && input === 's') {
+			setLineBreakAfterEachMatch(!lineBreakAfterEachMatch);
 		}
 	});
 
 	const getPanelColor = (i: number) =>
 		panelStepper.isCurrent(i) ? panelColors.active : panelColors.common;
 
-	return (
+	return displayOptions ? (
+		<Box flexDirection="column">
+			<Box marginBottom={2}>
+				<Text bold>tab</Text>
+				<Text> - activates the next option item</Text>
+				<Spacer />
+				<Text bold>space</Text>
+				<Text> - toggles a boolean option</Text>
+				<Spacer />
+				<Text bold>ctrl+o</Text>
+				<Text> - back</Text>
+			</Box>
+			<Box>
+				<Text
+					underline={optionsPanelStepper.isCurrent(0)}
+					dimColor={!optionsPanelStepper.isCurrent(0)}
+				>
+					Hide string before first occurence of match:
+				</Text>
+				<Text italic>&nbsp;{hideStringBeforeFirstMatch ? 'yes' : 'no'}</Text>
+			</Box>
+			<Box>
+				<Text
+					underline={optionsPanelStepper.isCurrent(1)}
+					dimColor={!optionsPanelStepper.isCurrent(1)}
+				>
+					Hide string after last occurence of match:
+				</Text>
+				<Text italic>&nbsp;{hideStringAfterLastMatch ? 'yes' : 'no'}</Text>
+			</Box>
+			<Box>
+				<Text
+					underline={optionsPanelStepper.isCurrent(2)}
+					dimColor={!optionsPanelStepper.isCurrent(2)}
+				>
+					Show only matched parts and remove the rest:
+				</Text>
+				<Text italic>&nbsp;{showOnlyMatchedParts ? 'yes' : 'no'}</Text>
+			</Box>
+			<Box>
+				<Text
+					underline={optionsPanelStepper.isCurrent(3)}
+					dimColor={!optionsPanelStepper.isCurrent(3)}
+				>
+					Add a new line after each match:
+				</Text>
+				<Text italic>&nbsp;{lineBreakAfterEachMatch ? 'yes' : 'no'}</Text>
+			</Box>
+		</Box>
+	) : (
 		<Box flexDirection="column">
 			<Box>
 				<Text>Status: </Text>
@@ -146,6 +259,9 @@ export default function App({
 						? 'Type `i` to start editing source text'
 						: '<tab> - activates the next section'}
 				</Text>
+				<Spacer />
+				<Text bold>ctrl+o</Text>
+				<Text> - setup extra options</Text>
 			</Box>
 			<Box borderStyle="single" borderColor={getPanelColor(0)}>
 				<Newline />
@@ -178,8 +294,10 @@ export default function App({
 					focus={panelStepper.isCurrent(1)}
 					value={regTxt}
 					onChange={value => {
-						setSubmitted(false);
-						setRegTxt(value);
+						if (!displayOptions) {
+							setSubmitted(false);
+							setRegTxt(value);
+						}
 					}}
 					onSubmit={value => {
 						let isValid = true;

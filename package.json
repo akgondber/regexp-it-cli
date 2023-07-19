@@ -1,6 +1,6 @@
 {
 	"name": "regexp-it-cli",
-	"version": "1.1.1",
+	"version": "2.0.0",
 	"description": "Command line application to search text by regular expressions",
 	"repository": "https://github.com/akgondber/regexp-it-cli",
 	"author": "Rushan Alyautdinov <akgondber@gmail.com>",
@@ -64,7 +64,13 @@
 		"extends": "xo-react",
 		"prettier": true,
 		"rules": {
-			"react/prop-types": "off"
+			"react/prop-types": "off",
+			"complexity": [
+				"error",
+				{
+					"max": 25
+				}
+			]
 		}
 	},
 	"prettier": {
@@ -85,6 +91,11 @@
 		"regexp",
 		"regularexpressions",
 		"source",
-		"text"
+		"text",
+		"string",
+		"strings",
+		"search",
+		"highlight",
+		"filter"
 	]
 }
