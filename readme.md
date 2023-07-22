@@ -28,6 +28,14 @@ $ regexp-it-cli --help
     $ regexp-it-cli --file "samples/content.txt" --regexp-str "([Tt]he|a) \w{4,6}\b"
 ```
 
+## Screenshots
+
+Demo with a source using `\b\w{7,8}\b` regular expression
+![](media/regexp-it-cli-demo-with-source.png)
+
+Demo with a file source
+![](media/regexp-cli-example-from-file.png)
+
 ## Demo
 
 ![](media/demo.gif)
