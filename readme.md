@@ -20,6 +20,12 @@ $ regexp-it-cli --help
     --source, -s Optional source string (can be typed through terminal ui after launching)
     --file, -f   Optional file which content's should be used as a source
     --regexp-str, -r Optional regexp string (can be typed through terminal ui after launching)
+    --regexp-pattern, -p Optional regexp named pattern to be used
+    --immediate-return, -i Show only matched parts without running interactive ui
+    --only-matched-parts, -m Activate only matched parts option (remove not matched parts from a source)
+    --new-line-after-each-match, -n Add a new line after each match in a source
+    --show-borders, -b Whether to use borders
+    --enable-highlighting, -h Use highlighting for matching parts
 
   Examples
     $ regexp-it-cli

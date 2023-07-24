@@ -7,6 +7,12 @@ import RangeStepper from 'range-stepper';
 type Props = {
 	source?: string;
 	regTxtVal?: string;
+	regFlags?: string;
+	onlyMatchedParts?: boolean;
+	newLineAfterEachMatch?: boolean;
+	showBorders?: boolean;
+	immediateReturn?: boolean;
+	isHighlightingEnabled?: boolean;
 };
 
 const defaultText =
@@ -26,13 +32,22 @@ function getErrorMessage(error: unknown) {
 export default function App({
 	source = defaultText,
 	regTxtVal: regTxtValue = '',
+	regFlags: regPatternFlags,
+	onlyMatchedParts,
+	newLineAfterEachMatch,
+	showBorders,
+	immediateReturn,
+	isHighlightingEnabled = true,
 }: Props) {
 	const [hideStringBeforeFirstMatch, setHideStringBeforeFirstMatch] =
 		useState(false);
 	const [hideStringAfterLastMatch, setHideStringAfterLastMatch] =
 		useState(false);
-	const [showOnlyMatchedParts, setShowOnlyMatchedParts] = useState(false);
-	const [lineBreakAfterEachMatch, setLineBreakAfterEachMatch] = useState(false);
+	const [showOnlyMatchedParts, setShowOnlyMatchedParts] =
+		useState(onlyMatchedParts);
+	const [lineBreakAfterEachMatch, setLineBreakAfterEachMatch] = useState(
+		newLineAfterEachMatch,
+	);
 
 	const getHighlightedMatches = (
 		source: string,
@@ -56,7 +71,10 @@ export default function App({
 
 			const plainText = <Text>{source.slice(j, curr.index)}</Text>;
 			const highlightedText = (
-				<Text color="#101820" backgroundColor="#FEE715">
+				<Text
+					color={isHighlightingEnabled ? '#101820' : undefined}
+					backgroundColor={isHighlightingEnabled ? '#FEE715' : undefined}
+				>
 					{source.slice(curr.index, curr.index + curr.match.length)}
 					{lineBreakAfterEachMatch ? <Newline /> : ''}
 				</Text>
@@ -93,8 +111,12 @@ export default function App({
 	};
 
 	const [txt, setTxt] = useState(source);
-	const [regTxt, setRegTxt] = useState(regTxtValue);
-	const [regFlags, setRegFlags] = useState(defaultFlags);
+	const [regTxt, setRegTxt] = useState(regTxtValue ?? '');
+	/* eslint-disable unicorn/prefer-logical-operator-over-ternary */
+	const [regFlags, setRegFlags] = useState(
+		regPatternFlags ? regPatternFlags : regTxtValue === '' ? '' : defaultFlags,
+	);
+	/* eslint-enable unicorn/prefer-logical-operator-over-ternary */
 	const [textEditing, setTextEditing] = useState(false);
 	const [regIsValid, setRegIsValid] = useState(true);
 	const [regError, setRegError] = useState('');
@@ -109,7 +131,11 @@ export default function App({
 			? txt
 			: getHighlightedMatches(txt, regTxt, regFlags),
 	);
-	const [lastFlags, setLastFlags] = useState(defaultFlags);
+	/* eslint-disable unicorn/prefer-logical-operator-over-ternary */
+	const [lastFlags, setLastFlags] = useState(
+		regPatternFlags ? regPatternFlags : regTxtValue === '' ? '' : defaultFlags,
+	);
+	/* eslint-enable unicorn/prefer-logical-operator-over-ternary */
 	const [panelStepper, setPanelStepper] = useState(
 		new RangeStepper({max: 2, current: 1}),
 	);
@@ -246,6 +272,10 @@ export default function App({
 				<Text italic>&nbsp;{lineBreakAfterEachMatch ? 'yes' : 'no'}</Text>
 			</Box>
 		</Box>
+	) : immediateReturn ? (
+		<Box>
+			<Text>{lastHighlightedText}</Text>
+		</Box>
 	) : (
 		<Box flexDirection="column">
 			<Box>
@@ -263,7 +293,10 @@ export default function App({
 				<Text bold>ctrl+o</Text>
 				<Text> - setup extra options</Text>
 			</Box>
-			<Box borderStyle="single" borderColor={getPanelColor(0)}>
+			<Box
+				borderStyle={showBorders ? 'single' : undefined}
+				borderColor={getPanelColor(0)}
+			>
 				<Newline />
 				{textEditing ? (
 					<TextInput

@@ -4,6 +4,7 @@ import React from 'react';
 import {render} from 'ink';
 import meow from 'meow';
 import App from './app.js';
+import {patterns} from './patterns.js';
 
 const cli = meow(
 	`
@@ -14,6 +15,12 @@ const cli = meow(
 		--source, -s Optional source string (can be typed through terminal ui after launching)
 		--file, -f   Optional file which content's should be used as a source
 		--regexp-str, -r Optional regexp string (can be typed through terminal ui after launching)
+		--regexp-pattern, -p Optional regexp named pattern to be used
+		--immediate-return, -i Show only matched parts without running interactive ui
+		--only-matched-parts, -m Activate only matched parts option (remove not matched parts from a source)
+		--new-line-after-each-match, -n Add a new line after each match in a source
+		--show-borders, -b Whether to use borders
+		--enable-highlighting, -h Use highlighting for matching parts
 
 	Examples
 	  $ regexp-it-cli 
@@ -38,15 +45,77 @@ const cli = meow(
 				type: 'string',
 				shortFlag: 'f',
 			},
+			regexpPattern: {
+				type: 'string',
+				shortFlag: 'p',
+			},
+			immediateReturn: {
+				type: 'boolean',
+				shortFlag: 'i',
+			},
+			onlyMatchedParts: {
+				type: 'boolean',
+				shortFlag: 'm',
+				default: false,
+			},
+			newLineAfterEachMatch: {
+				type: 'boolean',
+				shortFlag: 'n',
+				default: false,
+			},
+			showBorders: {
+				type: 'boolean',
+				shortFlag: 'b',
+				default: true,
+			},
+			enableHighlighting: {
+				type: 'boolean',
+				shortFlag: 'h',
+				default: true,
+			},
 		},
 	},
 );
 
-const {source, file, regexpStr} = cli.flags;
+const {source, file, regexpPattern, immediateReturn} = cli.flags;
+const {
+	onlyMatchedParts,
+	newLineAfterEachMatch,
+	enableHighlighting,
+	showBorders,
+} = cli.flags;
+
+let regexpString;
+let regexpFlags;
 let content = source;
+
+if (regexpPattern) {
+	if (Object.keys(patterns).includes(regexpPattern)) {
+		const regexpValue: RegExp = patterns[regexpPattern]!;
+		regexpString = regexpValue.source;
+		regexpFlags = regexpValue.flags;
+	}
+} else {
+	regexpString = cli.flags.regexpStr;
+}
 
 if (file) {
 	content = fs.readFileSync(file).toString().replaceAll(/\r\n/g, '\n');
 }
 
-render(<App source={content} regTxtVal={regexpStr} />);
+const {unmount} = render(
+	<App
+		source={content}
+		regTxtVal={regexpString}
+		regFlags={regexpFlags}
+		onlyMatchedParts={onlyMatchedParts}
+		newLineAfterEachMatch={newLineAfterEachMatch}
+		immediateReturn={immediateReturn}
+		showBorders={showBorders}
+		isHighlightingEnabled={enableHighlighting}
+	/>,
+);
+
+if (immediateReturn) {
+	unmount();
+}
