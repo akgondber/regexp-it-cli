@@ -7,7 +7,15 @@ import App from './source/app.js';
 test('shows info about switching between sections', t => {
 	const {lastFrame} = render(<App />);
 
-	t.regex(lastFrame()!, /<tab> - activates the next section/);
+	t.regex(
+		lastFrame()!,
+		new RegExp(
+			`${chalk.bold('tab')} - activate the`.replace(
+				/[.*+?^${}()|[\]\\]/g,
+				'\\$&',
+			),
+		),
+	);
 });
 
 test('fills provided source text', t => {
