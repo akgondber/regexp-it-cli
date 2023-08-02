@@ -65,6 +65,9 @@ Example with a file source
 Example using a predefined pattern import using the following options: `--regexp-pattern import --only-matched-parts`
 ![](media/screenshot-with-file-source-and-import-pattern.png)
 
+Example using the `.*security.*` regexp with --only-matched-parts`and`--highlight false` options for [awesome-dotnet's Readme file](https://github.com/quozd/awesome-dotnet) as a source (see full markdown file content [in raw mode](https://raw.githubusercontent.com/quozd/awesome-dotnet/master/README.md))
+![](media/filter-by-regexp-example-for-awesome-dotnet.png)
+
 Example using the `.*computer science.*` regexp and --only-matched-parts option for example md file as a source (you can show full markdown file content [in here](https://github.com/charlax/professional-programming) or [in raw mode](https://raw.githubusercontent.com/charlax/professional-programming/master/README.md))
 ![](media/example-with-computer-science-regexp.png)
 
