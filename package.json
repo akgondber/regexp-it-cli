@@ -1,6 +1,6 @@
 {
 	"name": "regexp-it-cli",
-	"version": "2.3.0",
+	"version": "2.4.0",
 	"description": "Command line application to search text by regular expressions",
 	"repository": "https://github.com/akgondber/regexp-it-cli",
 	"author": "Rushan Alyautdinov <akgondber@gmail.com>",

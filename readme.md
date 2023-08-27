@@ -30,8 +30,10 @@ Command line application to search text by regular expressions
     --highlight, -h                  Use colors to highligh matched parts
     --slide-mode, -l                 Show all matches in slide mode one after one with specified interval
     --slide-delay, -d                The timer delay in slide mode (in seconds)
-    --only-first-match, -a           Show only first match
+    --only-first-match, -i           Show only first match
     --only-last-match, -t            Show only last match
+    --after-regexp-str, -a           Show only matches suceeding specified regex match
+    --before-regexp-str, -o          Show only matches preceding specified regex match
 
 
   Examples
@@ -49,7 +51,7 @@ as a source for regexp expectations" --regexp-str "t[a-t]"
     $ rgi --file README.md --regexp-pattern urlWoP  --slide-mode --only-matched-parts
     $ rgi --file example.txt --regexp-pattern mention --only-first-match
     $ rgi --file someFile.txt --regexp-pattern articlePlusWord --e
-    $ rgi --file index.js --regexp-pattern import --slide --slide-delay 3
+    $ rgi --file index.js --regexp-pattern import -m -e
     $ rgi --file index.js --regexp-pattern import --only-first-match --exit
     $ rgi --file app.log --regexp-pattern error --only-last-match
 ```

@@ -19,6 +19,8 @@ type Props = {
 	isFirstMatchOnly?: boolean;
 	isLastMatchOnly?: boolean;
 	slideModeSpeed?: number;
+	afterRegexpStr?: string;
+	beforeRegexpStr?: string;
 };
 
 type SlideState = 'PAUSED' | 'RUNNING' | 'STOPPED';
@@ -54,6 +56,8 @@ export default function App({
 	slideModeSpeed = 1,
 	isFirstMatchOnly = false,
 	isLastMatchOnly = false,
+	afterRegexpStr = '',
+	beforeRegexpStr = '',
 }: Props) {
 	const [hideStringBeforeFirstMatch, setHideStringBeforeFirstMatch] =
 		useState(false);
@@ -78,6 +82,33 @@ export default function App({
 		isSlideModeControlBarEnabled,
 	);
 
+	const getResult = (source: string, rgxTxt: string, rgxFlags: string, afterRegexpStr : string, beforeRegexpStr : string): any[] => {
+		let searchStartingIndex = -1;
+		if (afterRegexpStr) {
+			let afterRegexMatch = new RegExp(afterRegexpStr).exec(source);
+			if (afterRegexMatch) {
+				searchStartingIndex = afterRegexMatch[0].length + afterRegexMatch.index;
+			}
+		}
+
+		let searchEndingIndex = -1;
+		if (beforeRegexpStr) {
+			let beforeRegexpMatch = new RegExp(beforeRegexpStr).exec(source);
+			if (beforeRegexpMatch) {
+				searchEndingIndex = beforeRegexpMatch.index;
+			}
+		}
+
+		let result = execall(new RegExp(rgxTxt, rgxFlags), source);
+		if (searchStartingIndex !== -1)
+			result = result.filter(item => item.index + item.match.length > searchStartingIndex);
+
+		if (searchEndingIndex !== -1)
+			result = result.filter(item => item.index < searchEndingIndex);
+	
+		return result;
+	}
+
 	const getArrayOfMatches = (source: string, rgxTxt: string, flags = 'gm') => {
 		const array: ReactNode[] = [];
 
@@ -85,7 +116,7 @@ export default function App({
 			return [<Text key={nanoid()}>{source}</Text>];
 		}
 
-		const result = execall(new RegExp(rgxTxt, flags), source);
+		const result = getResult(source, rgxTxt, flags, afterRegexpStr, beforeRegexpStr);
 		let j = 0;
 		let shouldExcludePlainText = hideStringBeforeFirstMatch;
 
@@ -169,8 +200,8 @@ export default function App({
 		if (regTxt === '') {
 			return <Text>{source}</Text>;
 		}
+		const result = getResult(source, rgxTxt, flags, afterRegexpStr, beforeRegexpStr);
 
-		const result = execall(new RegExp(rgxTxt, flags), source);
 		let j = 0;
 		let shouldExcludePlainText = hideStringBeforeFirstMatch;
 
@@ -642,6 +673,20 @@ export default function App({
 					</Text>
 				</Box>
 			</Box>
+			{
+				(afterRegexpStr || beforeRegexpStr) &&
+					<Box flexDirection='column'>
+						<Text>Additional filters:</Text>
+						<Box>
+							<Text bold>Show matches after regexp str: </Text>
+							<Text color="cyan">/{afterRegexpStr}/</Text>
+						</Box>
+						<Box>
+							<Text bold>Show matches before regexp str: </Text>
+							<Text color="cyan">/{beforeRegexpStr}/</Text>
+						</Box>
+					</Box>
+			}
 		</Box>
 	);
 }
