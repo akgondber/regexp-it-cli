@@ -1,0 +1,11 @@
+{
+	"2024-04-20": [
+		{
+			"name": "execall",
+			"message": "Still using execall?",
+			"command": "npm uninstall execall --save",
+			"operation": "delete",
+			"info": "To remove this package: npm uninstall execall --save"
+		}
+	]
+}

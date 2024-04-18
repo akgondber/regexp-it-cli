@@ -1,0 +1,41 @@
+### squash
+
+```
+$ git squash fixed-cursor-styling "Fixed cursor styling"
+$ git squash 95b7c52
+$ git squash HEAD~3
+```
+
+A1 Start Links
+https://ponyfoo.com/articles/event-emitter-obey-and-report - Event Emitter: Obey and Report
+https://vertabelo.com/blog/best-practices-for-database-design/ - Top 11 Best Practices for Database Design
+https://www.ardanlabs.com/blog/2023/09/implementing-enumerations-in-golang.html
+https://tech.findmypast.com/tweak-your-mind-into-functional-programming/ - Using Pattern Matching to write a more idiomatic functional code
+https://www.ardanlabs.com/blog/2024/04/range-over-functions-in-go.html - Range-Over Functions in Go
+https://www.ardanlabs.com/blog/2024/03/for-loops-and-more-in-go.html - For Loops and More in Go
+https://blog.codelitt.com/5-mental-models/ - 5 Mental Models for Software Engineers
+
+https://www.youtube.com/watch?v=FMZ-HARN0gI - Garbled Circuits - Computerphile
+https://www.youtube.com/watch?v=9oKpRTBfNXo - Python Hash Sets Explained & Demonstrated - Computerphile
+https://www.youtube.com/watch?v=5G56i_he79M - Budget Self-Driving Car - Computerphile
+
+https://github.com/aspida/aspida - TypeScript friendly HTTP client wrapper for the browser and node.js.
+https://github.com/niieani/hashids.js - A small JavaScript library to generate YouTube-like ids from numbers.
+https://github.com/tiimgreen/github-cheat-sheet - GitHub Cheat Sheet
+https://github.com/excalidraw/excalidraw - Virtual whiteboard for sketching hand-drawn like diagrams
+
+https://www.youtube.com/watch?v=J_EehoXLbIU - Kernelless Kernel Programming (eBPF) - Computerphile
+
+==========================================
+C1 Start Riddles
+==========================================
+1. What appears once in a minute, twice in a moment, but never in a thousand years?
+2. What has cities but no houses, forests but no trees, and water but no fish?
+3. I am always in front of you, but you can’t see me. What am I?
+4. I have many teeth but I can’t bite. What am I?
+5. What goes up and down but doesn’t move?
+6. I have four fingers and a thumb, but I’m not alive. What am I?
+7. I sometimes run, but I can’t walk. What am I?
+==========================================
+C1 End Riddles
+==========================================

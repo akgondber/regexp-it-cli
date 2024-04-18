@@ -13,48 +13,83 @@ $ npm install --global regexp-it-cli
 ```
 $ regexp-it-cli --help
 
-Command line application to search text by regular expressions
+Command line application to search text by regular expressions with plenty of features
 
-  Usage
-    $ regexp-it-cli
+Usage
+	$ regexp-it-cli
 
-  Options
-    --source, -s                     Optional source string (can be typed through terminal ui after launching)
-    --file, -f                       Optional file which content's should be used as a source
-    --regexp-str, -r                 Optional regexp string (can be typed through terminal ui after launching)
-    --regexp-pattern, -p             Use available predefined named pattern as a regexp str
-    --immediate-return, -e           Show only matched parts without running interactive ui
-    --only-matched-parts, -m         Activate only matched parts option (remove not matched parts from a source)
-    --new-line-after-each-match, -n  Add a new line after each match in a source
-    --show-borders, -b               Whether to use borders
-    --highlight, -h                  Use colors to highligh matched parts
-    --slide-mode, -l                 Show all matches in slide mode one after one with specified interval
-    --slide-delay, -d                The timer delay in slide mode (in seconds)
-    --only-first-match, -i           Show only first match
-    --only-last-match, -t            Show only last match
-    --after-regexp-str, -a           Show only matches suceeding specified regex match
-    --before-regexp-str, -o          Show only matches preceding specified regex match
+Options
+	--source, -s                     Optional source string (can be typed through terminal ui after launching)
+	--file, -f                       Optional file which content's should be used as a source
+	--url, -u                        Optional url where extract data from which content's should be used as a source
+	--regexp, -r                     Optional regexp string (can be typed through terminal ui after launching)
+	--regexp-pattern, -p             Use available predefined named pattern as a regexp str
+	--immediate-return, -i           Show only matched parts without running interactive ui
+	--only-matched-parts, -m         Activate only matched parts option (remove not matched parts from a source)
+	--new-line-after-each-match, -n  Add a new line after each match in a source
+	--show-borders, -b               Whether to use borders
+	--highlight, -h                  Use colors to highligh matched parts
+	--slide-mode, -l                 Show all matches in slide mode one after one with specified interval
+	--slide-delay, -e                The timer delay in slide mode (in seconds)
+	--only-first-match, -i           Show only first match
+	--only-last-match, -t            Show only last match
+	--after-regexp, -a                           Show only matches suceeding specified regex match
+	--before-regexp, -o                          Show only matches preceding specified regex match
 
 
-  Examples
-    $ regexp-it-cli
-    $ regexp-it-cli --source "My text which
+Examples
+	$ regexp-it-cli
+	$ regexp-it-cli --source "My text which
 is going to be used for regexp expectations"
-    $ regexp-it-cli  --source "My sample text
+	$ regexp-it-cli  --source "My sample text
 as a source for regexp expectations" --regexp-str "t[a-t]"
-    $ regexp-it-cli --file "content.txt" --regexp-str "([Tt]he|a) \w{4,6}\b"
-    $ regexp-it-cli --file current.log --regexp-pattern info
-    $ regexp-it-cli --file current.log --regexp-pattern error -h f
-    $ regexp-it-cli --file server.log --regexp-pattern debug --slide-mode
-    $ regexp-it-cli --file file.txt --regexp-pattern url --slide-mode
-    $ rgi --file README.md --regexp-pattern url --highlight false
-    $ rgi --file README.md --regexp-pattern urlWoP  --slide-mode --only-matched-parts
-    $ rgi --file example.txt --regexp-pattern mention --only-first-match
-    $ rgi --file someFile.txt --regexp-pattern articlePlusWord --e
-    $ rgi --file index.js --regexp-pattern import -m -e
-    $ rgi --file index.js --regexp-pattern import --only-first-match --exit
-    $ rgi --file app.log --regexp-pattern error --only-last-match
+	$ regexp-it-cli --file "content.txt" --regexp-str "([Tt]he|a) \w{4,6}\b"
+	$ regexp-it-cli --file current.log --regexp-pattern info
+	$ regexp-it-cli --file current.log --regexp-pattern error -h f
+	$ regexp-it-cli --file server.log --regexp-pattern debug --slide-mode
+	$ regexp-it-cli --file file.txt --regexp-pattern url --slide-mode
+	$ rgi --file README.md --regexp-pattern url --highlight false
+	$ rgi --file README.md --regexp-pattern urlWoP  --slide-mode --only-matched-parts
+	$ rgi --file example.txt --regexp-pattern mention --only-first-match
+	$ rgi --file someFile.txt --regexp-pattern articlePlusWord --e
+	$ rgi --file index.js --regexp-pattern import -m -e
+	$ rgi --file index.js --regexp-pattern import --only-first-match --exit
+	$ rgi --file app.log --regexp-pattern error --only-last-match
 ```
+
+## Demos, Use case
+
+### Basic demo
+
+![](media/demo.gif)
+
+### Using predefined patterns
+
+![](media/using-predefined-patterns.gif)
+
+### Filtering content between sections
+
+![](media/filtering-content-between-sections.gif)
+
+### Get matches from url source
+
+![](media/get-matches-from-url-source.gif)
+
+### Display matches in slide mode
+
+![](media/display-matches-in-slide-mode.gif)
+
+### Find repos belonging to specific user
+
+![](media/find-repos-belonging-to-specific-user-use-case.gif)
+
+### Displaying first and last match
+
+![](media/displaying-first-and-last-match.gif)
+
+### Hiding lines before and after match
+
+![](media/hiding-lines-before-and-after-match.gif)
 
 ## Screenshots
 
@@ -73,9 +108,8 @@ Example using the `.*security.*` regexp with --only-matched-parts`and`--highligh
 Example using the `.*computer science.*` regexp and --only-matched-parts option for example md file as a source (you can show full markdown file content [in here](https://github.com/charlax/professional-programming) or [in raw mode](https://raw.githubusercontent.com/charlax/professional-programming/master/README.md))
 ![](media/example-with-computer-science-regexp.png)
 
-## Demo
-
-![](media/demo.gif)
+Setup neccessary options by opening menu by using Ctrl+O key combination
+![](media/setup-options.png)
 
 ## License
 

@@ -1,9 +1,9 @@
 import React, {type ReactNode, useState, useEffect} from 'react';
 import {Text, Box, Newline, Spacer, useInput} from 'ink';
 import TextInput from 'ink-text-input';
-import execall from 'execall';
 import RangeStepper from 'range-stepper';
 import {nanoid} from 'nanoid';
+import {type MatchItem, execAll} from './utils.js';
 
 type Props = {
 	source?: string;
@@ -19,8 +19,8 @@ type Props = {
 	isFirstMatchOnly?: boolean;
 	isLastMatchOnly?: boolean;
 	slideModeSpeed?: number;
-	afterRegexpStr?: string;
-	beforeRegexpStr?: string;
+	afterRegexpString?: string;
+	beforeRegexpString?: string;
 };
 
 type SlideState = 'PAUSED' | 'RUNNING' | 'STOPPED';
@@ -42,6 +42,24 @@ function getErrorMessage(error: unknown) {
 	return String(error);
 }
 
+function sourceWithoutStartingMatch(
+	source: string,
+	afterRegexp: string | RegExp,
+) {
+	let sliceIndex;
+	if (typeof afterRegexp === 'string') {
+		sliceIndex = source.startsWith(afterRegexp) ? afterRegexp.length : 0;
+	} else {
+		const match = afterRegexp.exec(source);
+
+		if (match && match.index === 0) {
+			sliceIndex = match[0].length;
+		}
+	}
+
+	return source.slice(sliceIndex);
+}
+
 export default function App({
 	source = defaultText,
 	regTxtVal: regTxtValue = '',
@@ -56,8 +74,8 @@ export default function App({
 	slideModeSpeed = 1,
 	isFirstMatchOnly = false,
 	isLastMatchOnly = false,
-	afterRegexpStr = '',
-	beforeRegexpStr = '',
+	afterRegexpString = '',
+	beforeRegexpString = '',
 }: Props) {
 	const [hideStringBeforeFirstMatch, setHideStringBeforeFirstMatch] =
 		useState(false);
@@ -82,32 +100,46 @@ export default function App({
 		isSlideModeControlBarEnabled,
 	);
 
-	const getResult = (source: string, rgxTxt: string, rgxFlags: string, afterRegexpStr : string, beforeRegexpStr : string): any[] => {
+	/* eslint-disable max-params */
+	const getResult = (
+		source: string,
+		rgxTxt: string,
+		rgxFlags: string,
+		afterRegexpString: string,
+		beforeRegexpString: string,
+	): MatchItem[] => {
 		let searchStartingIndex = -1;
-		if (afterRegexpStr) {
-			let afterRegexMatch = new RegExp(afterRegexpStr).exec(source);
-			if (afterRegexMatch) {
-				searchStartingIndex = afterRegexMatch[0].length + afterRegexMatch.index;
+		if (afterRegexpString) {
+			const afterRegexp = new RegExp(afterRegexpString, 'gmi');
+			let afterRegexMatch;
+			while ((afterRegexMatch = afterRegexp.exec(source))) {
+				if (afterRegexMatch[0] === '') break;
+				searchStartingIndex = afterRegexMatch.index;
 			}
 		}
 
 		let searchEndingIndex = -1;
-		if (beforeRegexpStr) {
-			let beforeRegexpMatch = new RegExp(beforeRegexpStr).exec(source);
+		if (beforeRegexpString) {
+			const beforeRegexpMatch = new RegExp(beforeRegexpString, 'gmi').exec(
+				source,
+			);
 			if (beforeRegexpMatch) {
-				searchEndingIndex = beforeRegexpMatch.index;
+				searchEndingIndex = beforeRegexpMatch.index; // + beforeRegexpMatch[0].length;
 			}
 		}
 
-		let result = execall(new RegExp(rgxTxt, rgxFlags), source);
+		let result = execAll(new RegExp(rgxTxt, rgxFlags), source);
 		if (searchStartingIndex !== -1)
-			result = result.filter(item => item.index + item.match.length > searchStartingIndex);
+			result = result.filter(
+				item => item.index + item.match.length > searchStartingIndex,
+			);
 
 		if (searchEndingIndex !== -1)
 			result = result.filter(item => item.index < searchEndingIndex);
-	
+
 		return result;
-	}
+	};
+	/* eslint-enable max-params */
 
 	const getArrayOfMatches = (source: string, rgxTxt: string, flags = 'gm') => {
 		const array: ReactNode[] = [];
@@ -116,7 +148,13 @@ export default function App({
 			return [<Text key={nanoid()}>{source}</Text>];
 		}
 
-		const result = getResult(source, rgxTxt, flags, afterRegexpStr, beforeRegexpStr);
+		const result = getResult(
+			source,
+			rgxTxt,
+			flags,
+			afterRegexpString,
+			beforeRegexpString,
+		);
 		let j = 0;
 		let shouldExcludePlainText = hideStringBeforeFirstMatch;
 
@@ -134,7 +172,7 @@ export default function App({
 					backgroundColor={isHighlightingEnabled ? '#FEE715' : undefined}
 				>
 					{source.slice(curr.index, curr.index + curr.match.length)}
-					{lineBreakAfterEachMatch ? <Newline /> : ''}
+					{lineBreakAfterEachMatch && '\n'}
 				</Text>
 			);
 
@@ -200,9 +238,16 @@ export default function App({
 		if (regTxt === '') {
 			return <Text>{source}</Text>;
 		}
-		const result = getResult(source, rgxTxt, flags, afterRegexpStr, beforeRegexpStr);
 
-		let j = 0;
+		const result = getResult(
+			source,
+			rgxTxt,
+			flags,
+			afterRegexpString,
+			beforeRegexpString,
+		);
+
+		let j = typeof sourceWithoutStartingMatch === 'string' ? 1 : 0;
 		let shouldExcludePlainText = hideStringBeforeFirstMatch;
 
 		const acc = result.map(curr => {
@@ -219,7 +264,7 @@ export default function App({
 					backgroundColor={isHighlightingEnabled ? '#FEE715' : undefined}
 				>
 					{source.slice(curr.index, curr.index + curr.match.length)}
-					{lineBreakAfterEachMatch ? <Newline /> : ''}
+					{lineBreakAfterEachMatch ? '\n' : ''}
 				</Text>
 			);
 
@@ -229,7 +274,7 @@ export default function App({
 				return (
 					<Text key={curr.index}>
 						{highlightedText}
-						{showOnlyMatchedParts && <Newline />}
+						{showOnlyMatchedParts ? '\n' : ''}
 					</Text>
 				);
 			}
@@ -533,7 +578,9 @@ export default function App({
 			)}
 		</Box>
 	) : immediateReturn ? (
-		<Box>{lastHighlightedText}</Box>
+		<Box flexDirection="column">
+			<Text>{lastHighlightedText}</Text>
+		</Box>
 	) : (
 		<Box flexDirection="column">
 			<Box>
@@ -673,20 +720,19 @@ export default function App({
 					</Text>
 				</Box>
 			</Box>
-			{
-				(afterRegexpStr || beforeRegexpStr) &&
-					<Box flexDirection='column'>
-						<Text>Additional filters:</Text>
-						<Box>
-							<Text bold>Show matches after regexp str: </Text>
-							<Text color="cyan">/{afterRegexpStr}/</Text>
-						</Box>
-						<Box>
-							<Text bold>Show matches before regexp str: </Text>
-							<Text color="cyan">/{beforeRegexpStr}/</Text>
-						</Box>
+			{(afterRegexpString || beforeRegexpString) && (
+				<Box flexDirection="column">
+					<Text>Additional filters:</Text>
+					<Box>
+						<Text bold>Show matches after regexp str: </Text>
+						<Text color="cyan">/{afterRegexpString}/</Text>
 					</Box>
-			}
+					<Box>
+						<Text bold>Show matches before regexp str: </Text>
+						<Text color="cyan">/{beforeRegexpString}/</Text>
+					</Box>
+				</Box>
+			)}
 		</Box>
 	);
 }

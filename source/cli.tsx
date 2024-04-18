@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import React from 'react';
 import {render} from 'ink';
 import meow from 'meow';
+import axios, {AxiosError, type AxiosResponse} from 'axios';
 import App from './app.js';
 import {patterns} from './patterns.js';
 
@@ -14,23 +15,24 @@ const cli = meow(
 	Options
 		--source, -s                     Optional source string (can be typed through terminal ui after launching)
 		--file, -f                       Optional file which content's should be used as a source
-		--regexp-str, -r                 Optional regexp string (can be typed through terminal ui after launching)
+		--url, -u                        Optional url where extract data from which content's should be used as a source
+		--regexp, -r                     Optional regexp string (can be typed through terminal ui after launching)
 		--regexp-pattern, -p             Use available predefined named pattern as a regexp str
-		--immediate-return, -e           Show only matched parts without running interactive ui
+		--immediate-return, -i           Show only matched parts without running interactive ui
 		--only-matched-parts, -m         Activate only matched parts option (remove not matched parts from a source)
 		--new-line-after-each-match, -n  Add a new line after each match in a source
 		--show-borders, -b               Whether to use borders
 		--highlight, -h                  Use colors to highligh matched parts
 		--slide-mode, -l                 Show all matches in slide mode one after one with specified interval
-		--slide-delay, -d                The timer delay in slide mode (in seconds)
+		--slide-delay, -e                The timer delay in slide mode (in seconds)
 		--only-first-match, -i           Show only first match
 		--only-last-match, -t            Show only last match
-		--after-regexp-str, -a			 Show only matches suceeding specified regex match
-		--before-regexp-str, -o			 Show only matches preceding specified regex match
+		--after-regexp, -a			     Show only matches suceeding specified regex match
+		--before-regexp, -o			     Show only matches preceding specified regex match
 
 
 	Examples
-	  $ regexp-it-cli 
+	  $ regexp-it-cli
 	  $ regexp-it-cli --source "My text which\nis going to be used for regexp expectations"
 	  $ regexp-it-cli  --source "My sample text\nas a source for regexp expectations" --regexp-str "t[a-t]"
 	  $ regexp-it-cli --file "content.txt" --regexp-str "([Tt]he|a) \\w{4,6}\\b"
@@ -55,13 +57,23 @@ const cli = meow(
 				default:
 					'My sample text\nto be used as a source\nfor regular expressions experience',
 			},
-			regexpStr: {
+			regexp: {
 				type: 'string',
 				shortFlag: 'r',
+				aliases: ['regexpStr'],
+			},
+			regexpFlags: {
+				type: 'string',
+				aliases: ['flags'],
+				default: 'gmi',
 			},
 			file: {
 				type: 'string',
 				shortFlag: 'f',
+			},
+			url: {
+				type: 'string',
+				shortFlag: 'u',
 			},
 			regexpPattern: {
 				type: 'string',
@@ -70,7 +82,7 @@ const cli = meow(
 			immediateReturn: {
 				type: 'boolean',
 				aliases: ['exit'],
-				shortFlag: 'i',
+				shortFlag: 'q',
 			},
 			onlyMatchedParts: {
 				type: 'boolean',
@@ -101,7 +113,7 @@ const cli = meow(
 			slideModeSpeed: {
 				type: 'number',
 				shortFlag: 'e',
-				aliases: ['slideDelay'],
+				aliases: ['delay', 'slideDelay'],
 				default: 1,
 			},
 			onlyFirstMatch: {
@@ -113,19 +125,21 @@ const cli = meow(
 				type: 'boolean',
 				default: false,
 			},
-			afterRegexpStr: {
+			afterRegexp: {
 				type: 'string',
 				shortFlag: 'a',
+				aliases: ['afterRegexpStr'],
 			},
-			beforeRegexpStr: {
+			beforeRegexp: {
 				type: 'string',
 				shortFlag: 'o',
+				aliases: ['beforeRegexpStr'],
 			},
 		},
 	},
 );
 
-const {source, file, regexpPattern, immediateReturn} = cli.flags;
+const {source, file, url, regexpPattern, immediateReturn} = cli.flags;
 const {
 	onlyMatchedParts,
 	newLineAfterEachMatch,
@@ -135,8 +149,8 @@ const {
 	slideModeSpeed,
 	onlyFirstMatch,
 	onlyLastMatch,
-	afterRegexpStr,
-	beforeRegexpStr,
+	afterRegexp,
+	beforeRegexp,
 } = cli.flags;
 
 let regexpString;
@@ -150,11 +164,24 @@ if (regexpPattern) {
 		regexpFlags = regexpValue.flags;
 	}
 } else {
-	regexpString = cli.flags.regexpStr;
+	regexpString = cli.flags.regexp;
+	regexpFlags = cli.flags.regexpFlags;
 }
 
 if (file) {
 	content = fs.readFileSync(file).toString().replaceAll(/\r\n/g, '\n');
+} else if (url) {
+	try {
+		const result: AxiosResponse<string> = await axios.get(url);
+		content = result.data;
+	} catch (error) {
+		if (error instanceof AxiosError) {
+			console.log(
+				`There is some error occured when fetching url:\n${error.message}`,
+			);
+			process.exit(0); // eslint-disable-line n/prefer-global/process
+		}
+	}
 }
 
 const {unmount} = render(
@@ -171,8 +198,8 @@ const {unmount} = render(
 		slideModeSpeed={slideModeSpeed}
 		isFirstMatchOnly={onlyFirstMatch}
 		isLastMatchOnly={onlyLastMatch}
-		afterRegexpStr={afterRegexpStr}
-		beforeRegexpStr={beforeRegexpStr}
+		afterRegexpString={afterRegexp}
+		beforeRegexpString={beforeRegexp}
 	/>,
 );
 

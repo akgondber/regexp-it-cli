@@ -1,0 +1,45 @@
+2018-05-18 06:04:55,931 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 11.62ms
+2018-05-18 06:04:56,219 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 20.12ms
+2018-05-18 06:04:56,292 - octoprint.util.comm - INFO - M110 detected, setting current line number to 0
+2018-05-18 06:04:56,576 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 21.78ms
+2018-05-18 06:04:57,232 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 19.98ms
+2018-05-18 06:04:57,900 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 13.98ms
+2018-05-18 06:04:57,928 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 10.73ms
+2018-05-18 06:04:58,222 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 22.13ms
+2018-05-18 06:04:58,575 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 20.08ms
+2018-05-18 06:04:59,214 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 11.85ms
+2018-05-18 06:04:59,907 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 19.94ms
+2018-05-18 06:04:59,957 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 18.25ms
+2018-05-18 06:05:00,207 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 10.66ms
+2018-05-18 06:05:00,562 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 11.81ms
+2018-05-18 06:05:01,228 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 20.04ms
+2018-05-18 06:05:01,902 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 11.61ms
+2018-05-18 06:05:01,930 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 11.16ms
+2018-05-18 06:05:02,218 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 21.42ms
+2018-05-18 06:05:02,565 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 10.99ms
+2018-05-18 06:05:03,223 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 24.41ms
+2018-05-18 06:05:03,894 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 10.57ms
+2018-05-18 06:05:03,928 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 11.98ms
+2018-05-18 06:05:04,221 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 19.90ms
+2018-05-18 06:05:04,575 - tornado.access - WARNING - 409 GET /api/printer (127.0.0.1) 21.58ms
+2018-05-18 06:05:04,614 - octoprint.util.comm - INFO - Changing monitoring state from "Connecting" to "Operational"
+2018-05-18 06:05:04,619 - octoprint.util.comm - INFO - M110 detected, setting current line number to 0
+2018-05-18 06:05:04,664 - octoprint.util.comm - INFO - Printer reports firmware name "Marlin TH3D U1.R1.8b"
+
+2018-05-18 06:04:54,535 - Connecting to: /dev/ttyUSB0
+2018-05-18 06:04:54,543 - Changing monitoring state from "Offline" to "Opening serial port"
+2018-05-18 06:04:54,546 - Connected to: Serial<id=0x6a2eb890, open=True>(port='/dev/ttyUSB0', baudrate=115200, bytesize=8, parity='N', stopbits=1, timeout=10.0, xonxoff=False, rtscts=False, dsrdtr=False), starting monitor
+2018-05-18 06:04:54,546 - Foo 782 r43 bar qaz 238932
+2018-05-18 06:06:54,546 - Lyt Bae 672 Gre Aws N
+2018-05-18 06:04:54,546 - Changing monitoring state from "Opening serial port" to "Connecting"
+Sima lurga,547 - Changing monitoring state from "Opening serial port" to "Connecting"
+2018-05-18 06:04:54,546 - Foo 782 r43 bar qaz 238932
+2018-05-18 06:04:54,546 - Lar dor 83 sow
+2018-05-18 06:05:54,546 - Some othe monitoring stuff
+2018-05-18 06:06:54,546 - Lyt Bae 672 Gre Aws N
+2018-05-18 06:06:54,546 - Sur Bon Get Jw 802 cir
+2018-05-18 06:06:54,546 - D8r Poe Net Sie 83 Var
+2018-05-18 06:06:54,546 - Lyt Bae 672 Gre Aws N
+2018-05-18 06:06:54,546 - D8r Poe Net Sie 83 Var
+2018-05-18 06:06:54,546 - D8r Rim Sti Poe Net Sie 83 Var
+2018-05-18 06:06:54,546 - Flashy "Opening serial port" to "Connecting"

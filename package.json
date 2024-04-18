@@ -1,7 +1,7 @@
 {
 	"name": "regexp-it-cli",
-	"version": "2.4.0",
-	"description": "Command line application to search text by regular expressions",
+	"version": "3.0.0",
+	"description": "Command line application to search text by regular expressions with plenty of features",
 	"repository": "https://github.com/akgondber/regexp-it-cli",
 	"author": "Rushan Alyautdinov <akgondber@gmail.com>",
 	"license": "MIT",
@@ -30,7 +30,8 @@
 		"dist"
 	],
 	"dependencies": {
-		"execall": "^3.0.0",
+		"axios": "^1.6.8",
+		"clone-regexp": "^3.0.0",
 		"ink": "^4.1.0",
 		"ink-text-input": "^5.0.1",
 		"meow": "^12.0.1",
@@ -70,7 +71,7 @@
 			"complexity": [
 				"error",
 				{
-					"max": 25
+					"max": 26
 				}
 			],
 			"react/boolean-prop-naming": "off"
